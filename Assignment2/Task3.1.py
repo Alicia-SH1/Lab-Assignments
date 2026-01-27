@@ -36,13 +36,13 @@ e = keys[1]
 d = keys[2]
 
 message = "Hello this is the message"
-print(message)
 
 encrypted_int = encrypt(message, e, n)
 print(encrypted_int)
 decrypted_message = decrypt(encrypted_int, d, n)
 
 assert decrypted_message == message
+print(message)
 print(decrypted_message)
 
 

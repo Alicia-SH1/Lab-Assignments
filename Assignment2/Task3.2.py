@@ -72,6 +72,9 @@ calc_s_prime = s_prime_brute_forcer(alice_encrypted_message, init_vec=iv)
 r_inverse = mod_inverse(r, n)
 calculated_s = (calc_s_prime * r_inverse) % n
 
+
+print(calc_s_prime)
+print(s_prime)
 print(calculated_s)
 print(original_s)
 
