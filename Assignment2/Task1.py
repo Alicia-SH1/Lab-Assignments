@@ -18,8 +18,8 @@ def get_public_key(secret):
 def get_shared_key(secret, other_public):
     return pow(other_public,secret, q)
 
-x_a = 30
-x_b = 123
+x_a = 5
+x_b = 10
 
 public_key_a = get_public_key(x_a)
 public_key_b = get_public_key(x_b)
@@ -27,7 +27,8 @@ public_key_b = get_public_key(x_b)
 shared_key_a = get_shared_key(x_a, public_key_b)
 shared_key_b = get_shared_key(x_b, public_key_a)
 
-print(shared_key_a == shared_key_b)
+print(shared_key_a)
+print(shared_key_b)
 assert shared_key_a == shared_key_b
 
 message = pad(str.encode("encrypt this message"),16)
@@ -50,8 +51,9 @@ decipher_b = AES.new(truncated_key, AES.MODE_CBC,iv=iv)
 decrypted_message_a = unpad(decipher_a.decrypt(encrypted_message_a),16)
 decrypted_message_b = unpad(decipher_b.decrypt(encrypted_message_b),16)
 
-print(decrypted_message_a == decrypted_message_b)
 assert decrypted_message_a == decrypted_message_b
+
+print(decrypted_message_a)
 
 
 

@@ -27,48 +27,55 @@ def generate_keys(bits_prime_length):
 
     return n,e,d
 
-def encrypt(plaintext, e, n):
-    m = int(plaintext.encode('ascii').hex(),16)
+def encrypt(m, e, n):
     return pow(m,e,n)
 def decrypt(cipher_int, d, n):
-    m = pow(cipher_int, d, n)
-    return bytes.fromhex(hex(m)[2:]).decode('ASCII')
+    return pow(cipher_int, d, n)
+def s_prime_brute_forcer(encrypted_message, init_vec):
+    i = 0
+    while True:
+        key = hashlib.sha256(str(i).encode()).hexdigest()
+        key = str(key)[:16].encode()
+        cipher2 = AES.new(key, AES.MODE_CBC, iv=init_vec)
+        if cipher2.decrypt(encrypted_message)[:len("Hello Bob")] == b"Hello Bob": # This line would probably check for normal texts if you don't know the message.
+            return i
+        i += 1
 
-keys = generate_keys(128)
+keys = generate_keys(512)
 n = keys[0]
 e = keys[1]
 d = keys[2]
 
-# This doesn't really get used
-c = encrypt("THIS IS BOB'S SECRET KEY", e, n)
+original_s = 7987
+r = 2
 
-c_prime = n
+c = encrypt(original_s, e, n)
+
+c_prime = (c * pow(r,e)) % n
+
 iv = b"1234567890123456"
 
-alice_calculated_s = pow(c_prime, d, n)
-mallory_s = 0
+s_prime = decrypt(c_prime, d, n)
 
-alice_key = hashlib.sha256(str(alice_calculated_s).encode()).hexdigest()
-mallory_key = hashlib.sha256(str(mallory_s).encode()).hexdigest()
+alice_key = hashlib.sha256(str(s_prime).encode()).hexdigest()
 
 alice_key = str(alice_key)[:16].encode()
-mallory_key = str(mallory_key)[:16].encode()
 
 cipher = AES.new(alice_key, AES.MODE_CBC,iv=iv)
-mallory_decrypt_cipher = AES.new(mallory_key, AES.MODE_CBC, iv=iv)
 
 message = "Hello Bob"
 message = pad(str.encode(message),16)
 
 alice_encrypted_message = cipher.encrypt(message)
 
-mallory_decrypted_message = unpad(mallory_decrypt_cipher.decrypt(alice_encrypted_message), 16)
+calc_s_prime = s_prime_brute_forcer(alice_encrypted_message, init_vec=iv)
+r_inverse = mod_inverse(r, n)
+calculated_s = (calc_s_prime * r_inverse) % n
 
-print(mallory_decrypted_message)
+print(calculated_s)
+print(original_s)
 
-
-
-
+assert calculated_s == original_s
 
 
 

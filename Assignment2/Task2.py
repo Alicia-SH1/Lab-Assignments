@@ -30,5 +30,6 @@ shared_key_a = get_shared_key(x_a, public_key_b)
 shared_key_b = get_shared_key(x_b, public_key_a)
 
 assert shared_key_a == shared_key_b
+print(shared_key_a)
 
 
